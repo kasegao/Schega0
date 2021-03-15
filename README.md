@@ -31,7 +31,7 @@ $ clasp create sample_app
   api
 ```
 
-設定ファイル [env.js](./env.js) に各種値を設定．
+設定ファイル [env.js](./env.js.example) に各種値を設定．
 
 ```js
 const APP_TOKEN = "";
