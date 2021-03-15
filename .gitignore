@@ -1,0 +1,9 @@
+# node
+node_modules/
+
+# gas
+appsscript.json
+.clasp.json
+
+# env
+env.js
