@@ -51,7 +51,9 @@ $ clasp push
 
 調整用のスプレッドシートを一つ作成し，GAS プロジェクトと紐づけてください．このとき，スプレッドシートが調整に参加する全てのユーザーと共有されている必要があります．
 
-最後にアプリをデプロイして Web アプリの URL を Slack API の Slash Commands に設定すれば完了です．
+最後にアプリをデプロイして Web アプリの URL を Slack API の Slash Commands に設定し，次のように timeDrivenFunction を毎分実行するようにトリガーを作成すれば設定完了です．
+
+![trigger](https://user-images.githubusercontent.com/10525696/111203129-f1874800-8607-11eb-99ea-d96fd6017fd2.PNG)
 
 ## 使い方
 
