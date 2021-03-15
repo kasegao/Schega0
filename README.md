@@ -43,11 +43,13 @@ const COMMAND_NAME = "/";
 const CACHE_KEY = "Schega0";
 ```
 
-App Script プロジェクトにアップロード
+GAS プロジェクトにアップロード
 
 ```bash
 $ clasp push
 ```
+
+調整用のスプレッドシートを一つ作成し，GAS プロジェクトと紐づけてください．このとき，スプレッドシートが調整に参加する全てのユーザーと共有されている必要があります．
 
 最後にアプリをデプロイして Web アプリの URL を Slack API の Slash Commands に設定すれば完了です．
 
@@ -58,6 +60,8 @@ $ clasp push
 ```slack
 /schega0 yyyy/MM/dd days @member1 @member2 ...
 ```
+
+![reply](https://user-images.githubusercontent.com/10525696/111189321-4f606380-85f9-11eb-812f-46cd808cbb41.PNG)
 
 ### 必須オプション
 
