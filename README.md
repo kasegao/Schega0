@@ -2,6 +2,8 @@
 
 日程調整用のスプレッドシートを自動生成する Slack bot です．
 
+![Schega0](https://user-images.githubusercontent.com/10525696/111187140-145d3080-85f7-11eb-8d7f-f7aa2e6f3e88.PNG)
+
 ## Quick Start
 
 事前に Slack app を作成しておいてください．Bot Token Scopes に以下の二つを設定してください．
