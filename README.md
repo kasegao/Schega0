@@ -61,7 +61,7 @@ $ clasp push
 /schega0 yyyy/MM/dd days @member1 @member2 ...
 ```
 
-![reply](https://user-images.githubusercontent.com/10525696/111189321-4f606380-85f9-11eb-812f-46cd808cbb41.PNG)
+![reply](https://user-images.githubusercontent.com/10525696/111191346-50929000-85fb-11eb-8050-6d5ef7628650.PNG)
 
 ### 必須オプション
 
