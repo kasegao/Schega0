@@ -179,7 +179,11 @@ function getUserName(user_id: string) {
     if (!userinfo.ok) {
       return ''
     }
-    return userinfo.user.profile.display_name as string
+    const profile = userinfo.user.profile
+    const display_name = profile.display_name
+    const real_name = profile.real_name
+    const user_name = display_name || real_name || user_id
+    return user_name as string
   } catch (e) {
     return ''
   }
