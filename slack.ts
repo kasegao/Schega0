@@ -55,9 +55,9 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     const payload = FormPayloadProxy.Create(json)
     const cache_data = main.createCacheData(sheet_ret.sheet_name, payload)
 
-    // hook in 90 seconds
+    // hook in 60 seconds
     const date = new Date()
-    date.setTime(date.getTime() + 1000 * 90)
+    date.setTime(date.getTime() + 1000 * 60)
     const trigger = ScriptApp.newTrigger('sheetTrigger')
       .timeBased()
       .at(date)
@@ -72,7 +72,7 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
       method: 'post',
       contentType: 'application/json',
-      payload: view,
+      payload: JSON.stringify(view),
     }
     UrlFetchApp.fetch(config.webhook_url(), options)
     return ContentService.createTextOutput()
