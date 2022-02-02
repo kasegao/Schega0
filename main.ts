@@ -76,12 +76,11 @@ export function buildSheet(cache_data: CacheData) {
   // rename sheet
   const user_name = getUserName(result.user_id)
   sheet.setName(
-    Utilities.formatString(
-      '%s-%s_%s',
-      user_name,
-      Utilities.formatDate(new Date(), 'Asia/Tokyo', 'MM/dd'),
-      genRandomStr(6),
-    ),
+    `${Utilities.formatDate(
+      new Date(),
+      'Asia/Tokyo',
+      'MM/dd',
+    )}_${user_name}_${genRandomStr(6)}`,
   )
 
   // get options
@@ -256,13 +255,6 @@ function setConsts(
   daysCell.setDataValidation(daysRule)
 }
 
-function getMembers(sheet: GoogleAppsScript.Spreadsheet.Sheet) {
-  return sheet
-    .getRange(CELL_MEMB_EDIT.row, CELL_MEMB_EDIT.col)
-    .getValue()
-    .split('\n')
-}
-
 function setMembers(
   sheet: GoogleAppsScript.Spreadsheet.Sheet,
   members: string[],
@@ -348,11 +340,6 @@ function setColNames(
   col_names: string[][],
 ) {
   sheet.getRange(start_row, 1, col_names.length, 1).setValues(col_names)
-}
-
-function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit) {
-  const range = e.range
-  return range.getColumn
 }
 
 export function makeCache() {
