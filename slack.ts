@@ -13,6 +13,11 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     throw new Error('Invalid token')
   }
 
+  // check callback_id
+  if (json.callback_id != config.callback_id()) {
+    throw new Error('Invalid callback_id')
+  }
+
   if (['shortcut', 'message_action'].includes(json.type)) {
     // return modal
     const url = 'https://slack.com/api/views.open'
@@ -35,6 +40,8 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     }
     UrlFetchApp.fetch(url, options)
     return ContentService.createTextOutput()
+  } else if (json.type === 'block_actions') {
+    return ContentService.createTextOutput()
   } else if (json.type === 'view_submission') {
     // insert new sheet
     const sheet_ret = main.newSheet()
@@ -42,9 +49,9 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     const payload = FormPayloadProxy.Create(json)
     const cache_data = main.createCacheData(sheet_ret.sheet_name, payload)
 
-    // hook in 1 minute
+    // hook in 90 seconds
     const date = new Date()
-    date.setTime(date.getTime() + 1000 * 60)
+    date.setTime(date.getTime() + 1000 * 90)
     const trigger = ScriptApp.newTrigger('buildSheet')
       .timeBased()
       .at(date)
@@ -55,10 +62,13 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     cache.put(cache_key, cache_data, 600)
 
     // response
-    const response = {
-      text: `日程調整をお願いします（シートの作成に1分程度かかります）\n${sheet_ret.sheet_url}`,
-      response_type: 'in_channel',
+    const view = message_reply(sheet_ret.sheet_url)
+    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+      method: 'post',
+      contentType: 'application/json',
+      payload: view,
     }
+    const response = UrlFetchApp.fetch(config.webhook_url(), options)
     return ContentService.createTextOutput(
       JSON.stringify(response),
     ).setMimeType(ContentService.MimeType.JSON)
@@ -377,6 +387,20 @@ const modal_setting = (initial_date: string) => {
             ],
           },
         ],
+      },
+    ],
+  }
+}
+
+const message_reply = (sheet_url: string) => {
+  return {
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `日程調整をお願いします（シートの作成に1分程度かかります）\n<${sheet_url}|${sheet_url}>`,
+        },
       },
     ],
   }
