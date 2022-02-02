@@ -59,8 +59,41 @@ export interface TpBeginOrTpEnd {
   selected_time: string
 }
 
+export interface CacheData {
+  sheet_name: string
+  result: FormPayload
+}
+
 // Stores the currently-being-typechecked object for error messages.
 let obj: any = null
+export class CacheDataProxy {
+  public readonly sheet_name: string
+  public readonly result: FormPayloadProxy
+  public static Parse(d: string): CacheDataProxy {
+    return CacheDataProxy.Create(JSON.parse(d))
+  }
+  public static Create(d: any, field = 'root'): CacheDataProxy {
+    if (!field) {
+      obj = d
+      field = 'root'
+    }
+    if (d === null || d === undefined) {
+      throwNull2NonNull(field, d)
+    } else if (typeof d !== 'object') {
+      throwNotObject(field, d, false)
+    } else if (Array.isArray(d)) {
+      throwIsArray(field, d, false)
+    }
+    checkString(d.sheet_name, false, field + '.sheet_name')
+    d.result = FormPayloadProxy.Create(d.result, field + '.result')
+    return new CacheDataProxy(d)
+  }
+  private constructor(d: any) {
+    this.sheet_name = d.sheet_name
+    this.result = d.result
+  }
+}
+
 export class FormPayloadProxy {
   public readonly user: UserProxy
   public readonly api_app_id: string
