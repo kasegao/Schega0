@@ -28,10 +28,10 @@ const CELL_FRM_ORIGIN: Cell = {
 const TRANSPOSE = (a: string[][]) => a[0].map((_, c) => a.map((r) => r[c]))
 
 // insert new sheet
-function newSheet() {
-  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-  const sheet_name = genRandomStr(12)
-  const sheet = spreadsheet.insertSheet(sheet_name)
+export function newSheet(sheet_name?: string) {
+  const spreadsheet = SpreadsheetApp.openById(SS_KEY)
+  const sheet_nm = sheet_name ?? genRandomStr(12)
+  const sheet = spreadsheet.insertSheet(sheet_nm)
   const msgRange = sheet.getRange(1, 1)
   msgRange.setValue('現在シート作成中です。最大で3分程度かかります。')
   msgRange.setFontSize(24)
@@ -54,15 +54,13 @@ function genRandomStr(length: number) {
 }
 
 // create sheet contents
-function buildSheet() {
+export function buildSheet(load_data: LoadData) {
   // get input data
-  const cache_key = 'hoge'
-  const cache = getCacheData(cache_key)
-  const result = cache.result
+  const result = load_data.result
 
   // get sheet
   const spreadsheet = SpreadsheetApp.openById(SS_KEY)
-  const sheet = spreadsheet.getSheetByName(cache.sheet_name)
+  const sheet = spreadsheet.getSheetByName(load_data.sheet_name)
   if (sheet == null) return
 
   // rename sheet
@@ -92,12 +90,10 @@ type LoadData = {
   result: ModalResult
 }
 
-function getCacheData(cache_key: string) {
-  const cache = makeCache()
-  const cache_data = cache.get(cache_key)
+export function intoLoadData(cache: CacheData) {
   const data: LoadData = {
-    sheet_name: cache_data.sheet_name,
-    result: intoModalResult(cache_data.result),
+    sheet_name: cache.sheet_name,
+    result: intoModalResult(cache.result),
   }
   return data
 }
@@ -358,10 +354,3 @@ export function makeCache() {
     },
   }
 }
-
-const cache = getCacheData('')
-const result = cache.result
-console.log(result)
-
-const times = getTimes(result.time_begin, result.time_end, result.interval)
-console.log(times)
