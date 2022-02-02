@@ -13,18 +13,19 @@ type Cell = {
   row: number
   col: number
 }
-const CELL_MEMBERS: Cell = {
+const CELL_MEMB_EDIT: Cell = {
   row: 4,
   col: 2,
 }
-const CELL_DAYS: Cell = {
-  row: CELL_MEMBERS.row + 1,
-  col: CELL_MEMBERS.col,
+const CELL_DAYS_EDIT: Cell = {
+  row: CELL_MEMB_EDIT.row + 1,
+  col: CELL_MEMB_EDIT.col,
 }
-const CELL_ORIGIN: Cell = {
+const CELL_FRM_ORIGIN: Cell = {
   row: 8,
   col: 1,
 }
+const TRANSPOSE = (a: string[][]) => a[0].map((_, c) => a.map((r) => r[c]))
 
 // insert new sheet
 function newSheet() {
@@ -75,10 +76,15 @@ function buildSheet() {
     ),
   )
 
+  // get options
   const times = getTimes(result.time_begin, result.time_end, result.interval)
   const members = result.participants
     .map((v) => (v == result.user_id ? user_name : getUserName(v)))
     .filter(String)
+
+  // build frames
+  initSheet(sheet, times.length)
+  generateFrames(sheet, members, times, result.len_days)
 }
 
 type CacheData = {
@@ -173,6 +179,167 @@ function getUserName(user_id: string) {
   } catch (e) {
     return ''
   }
+}
+
+function initSheet(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  len_times: number,
+) {
+  sheet.clear()
+
+  const numColumns = sheet.getMaxColumns()
+  if (numColumns < 2 + len_times) {
+    sheet.insertColumnsAfter(numColumns - 1, 2 + len_times - numColumns)
+  }
+  sheet.setColumnWidth(1, 160)
+  sheet.setColumnWidth(2 + len_times, 300)
+  sheet.setColumnWidths(2, len_times, 46)
+}
+
+function generateFrames(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  members: string[],
+  times: string[],
+  len_days: number,
+) {
+  const rowNames2d = [members]
+  setConsts(sheet, len_days)
+  sheet.setFrozenRows(3)
+  setMembers(sheet, rowNames2d[0])
+
+  const colNames = TRANSPOSE(rowNames2d)
+  for (let i = 0; i < len_days; i++) {
+    const row = CELL_FRM_ORIGIN.row + i * (colNames.length + 1 + 2)
+    setFrame(sheet, row, colNames.length + 1, times.length)
+    setTitles(sheet, row, i, times)
+    setColNames(sheet, row + 1, colNames)
+  }
+  const today = new Date()
+  sheet
+    .getRange(CELL_FRM_ORIGIN.row, CELL_FRM_ORIGIN.col)
+    .setValue(Utilities.formatDate(today, 'Asia/Tokyo', 'MM/dd'))
+}
+
+function setConsts(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  len_days: number,
+) {
+  const constRange = sheet.getRange(
+    1,
+    1,
+    TOP_CONTENTS.length,
+    TOP_CONTENTS[0].length,
+  )
+  constRange.setValues(TOP_CONTENTS)
+  constRange.setFontSize(12)
+  constRange.setVerticalAlignment('top')
+  sheet.getRange(2, 2, 1, 2).setBackground('#ea4335')
+  sheet.getRange(3, 2, 1, 2).setBackground('#fbbc04')
+  const boldRanges = sheet.getRangeList(['A1', 'A4:A5'])
+  boldRanges.setFontWeight('bold')
+
+  const daysCell = sheet.getRange(CELL_DAYS_EDIT.row, CELL_DAYS_EDIT.col)
+  daysCell.setValue(len_days)
+  const daysRule = SpreadsheetApp.newDataValidation()
+    .requireNumberBetween(1, 20)
+    .setAllowInvalid(false)
+    .setHelpText('Number must be between 1 and 20.')
+    .build()
+  daysCell.setDataValidation(daysRule)
+}
+
+function getMembers(sheet: GoogleAppsScript.Spreadsheet.Sheet) {
+  return sheet
+    .getRange(CELL_MEMB_EDIT.row, CELL_MEMB_EDIT.col)
+    .getValue()
+    .split('\n')
+}
+
+function setMembers(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  members: string[],
+) {
+  sheet
+    .getRange(CELL_MEMB_EDIT.row, CELL_MEMB_EDIT.col)
+    .setValue(members.join('\n'))
+}
+
+// start_row: 1-indexed
+function setFrame(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  start_row: number,
+  num_rows: number,
+  len_times: number,
+) {
+  const numColumns = len_times + 2
+  const frame = sheet.getRange(start_row, 1, num_rows, numColumns)
+  const solidRanges = sheet.getRangeList([
+    sheet.getRange(start_row, 1, num_rows, 1).getA1Notation(),
+    sheet.getRange(start_row, 1, 1, numColumns).getA1Notation(),
+    sheet.getRange(start_row, numColumns, num_rows, 1).getA1Notation(),
+  ])
+  // range.setBorder(top, left, bottom, right, vertical, horizontal, color, style)
+  frame.setBorder(
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    null,
+    SpreadsheetApp.BorderStyle.DASHED,
+  )
+  solidRanges.setBorder(
+    true,
+    true,
+    true,
+    true,
+    null,
+    null,
+    null,
+    SpreadsheetApp.BorderStyle.SOLID,
+  )
+  frame.setBorder(
+    true,
+    true,
+    true,
+    true,
+    null,
+    null,
+    null,
+    SpreadsheetApp.BorderStyle.SOLID_THICK,
+  )
+}
+
+// row: 1-indexed
+function setTitles(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  row: number,
+  add_date: number,
+  times: string[],
+) {
+  const titles = [[`=A${CELL_FRM_ORIGIN.row} + ${add_date}`]]
+  Array.prototype.push.apply(titles[0], times)
+  const numColumns = titles[0].push('備考')
+  const titleRange = sheet.getRange(row, 1, 1, numColumns)
+  titleRange.setHorizontalAlignment('center')
+  titleRange.setVerticalAlignment('middle')
+  const boldRanges = sheet.getRangeList([
+    sheet.getRange(row, 1).getA1Notation(),
+    sheet.getRange(row, numColumns).getA1Notation(),
+  ])
+  boldRanges.setFontWeight('bold')
+  boldRanges.setFontSize(12)
+  titleRange.setValues(titles)
+}
+
+// row: 1-indexed
+function setColNames(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  start_row: number,
+  col_names: string[][],
+) {
+  sheet.getRange(start_row, 1, col_names.length, 1).setValues(col_names)
 }
 
 function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit) {
