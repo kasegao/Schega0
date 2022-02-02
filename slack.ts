@@ -68,8 +68,9 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     cache.put(cache_key, cache_data, 600)
 
     // response
+    const user_id = json.user.id as string
     const view = message_reply(
-      'シートの作成中です。しばらくお待ちください。\n※最大で3分程度かかります',
+      `<@${user_id}> シートの作成中です。しばらくお待ちください。\n※最大で3分程度かかります`,
     )
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
       method: 'post',
@@ -93,7 +94,11 @@ function sheetTrigger(e: GoogleAppsScript.Events.TimeDriven) {
   main.buildSheet(cache_data)
 
   // notify
-  const view = message_reply(`日程調整をお願いします\n${sheet_ret.sheet_url}`)
+  const user_ids = cache_data.result.participants
+  const mention = user_ids.map((id) => `<@${id}>`).join(' ')
+  const view = message_reply(
+    `${mention}\n日程調整をお願いします\n${sheet_ret.sheet_url}`,
+  )
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'post',
     contentType: 'application/json',
