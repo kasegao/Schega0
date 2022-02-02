@@ -1,0 +1,258 @@
+{
+  "type": "modal",
+  "title": {
+    "type": "plain_text",
+    "text": "日程調整",
+    "emoji": true
+  },
+  "submit": {
+    "type": "plain_text",
+    "text": "Submit",
+    "emoji": true
+  },
+  "close": {
+    "type": "plain_text",
+    "text": "Cancel",
+    "emoji": true
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "日程調整の参加者"
+      },
+      "accessory": {
+        "type": "multi_conversations_select",
+        "placeholder": {
+          "type": "plain_text",
+          "text": "participants",
+          "emoji": true
+        },
+        "filter": {
+          "include": ["im"],
+          "exclude_bot_users": true
+        },
+        "action_id": "users"
+      }
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "datepicker",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Select a start date",
+            "emoji": true
+          },
+          "action_id": "dp_start"
+        },
+        {
+          "type": "static_select",
+          "initial_option": {
+            "text": {
+              "type": "plain_text",
+              "text": "5",
+              "emoji": true
+            },
+            "value": "5"
+          },
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Select a number of days",
+            "emoji": true
+          },
+          "options": [
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "1",
+                "emoji": true
+              },
+              "value": "1"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "2",
+                "emoji": true
+              },
+              "value": "2"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "3",
+                "emoji": true
+              },
+              "value": "3"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "4",
+                "emoji": true
+              },
+              "value": "4"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "5",
+                "emoji": true
+              },
+              "value": "5"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "6",
+                "emoji": true
+              },
+              "value": "6"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "7",
+                "emoji": true
+              },
+              "value": "7"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "8",
+                "emoji": true
+              },
+              "value": "8"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "9",
+                "emoji": true
+              },
+              "value": "9"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "10",
+                "emoji": true
+              },
+              "value": "10"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "11",
+                "emoji": true
+              },
+              "value": "11"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "12",
+                "emoji": true
+              },
+              "value": "12"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "13",
+                "emoji": true
+              },
+              "value": "13"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "14",
+                "emoji": true
+              },
+              "value": "14"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "15",
+                "emoji": true
+              },
+              "value": "15"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "16",
+                "emoji": true
+              },
+              "value": "16"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "17",
+                "emoji": true
+              },
+              "value": "17"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "18",
+                "emoji": true
+              },
+              "value": "18"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "19",
+                "emoji": true
+              },
+              "value": "19"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "20",
+                "emoji": true
+              },
+              "value": "20"
+            }
+          ],
+          "action_id": "sp_days"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "timepicker",
+          "initial_time": "09:00",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Select begin time",
+            "emoji": true
+          },
+          "action_id": "tp_begin"
+        },
+        {
+          "type": "timepicker",
+          "initial_time": "17:00",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Select end time",
+            "emoji": true
+          },
+          "action_id": "tp_end"
+        }
+      ]
+    }
+  ]
+}
