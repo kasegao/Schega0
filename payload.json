@@ -17,12 +17,14 @@
   },
   "blocks": [
     {
+      "block_id": "users",
       "type": "section",
       "text": {
         "type": "mrkdwn",
         "text": "参加者"
       },
       "accessory": {
+        "action_id": "users",
         "type": "multi_conversations_select",
         "placeholder": {
           "type": "plain_text",
@@ -32,8 +34,7 @@
         "filter": {
           "include": ["im"],
           "exclude_bot_users": true
-        },
-        "action_id": "users"
+        }
       }
     },
     {
@@ -45,18 +46,20 @@
       }
     },
     {
+      "block_id": "dates",
       "type": "actions",
       "elements": [
         {
+          "action_id": "dp_start",
           "type": "datepicker",
           "placeholder": {
             "type": "plain_text",
             "text": "Select a start date",
             "emoji": true
-          },
-          "action_id": "dp_start"
+          }
         },
         {
+          "action_id": "sp_days",
           "type": "static_select",
           "initial_option": {
             "text": {
@@ -232,33 +235,33 @@
               },
               "value": "20"
             }
-          ],
-          "action_id": "sp_days"
+          ]
         }
       ]
     },
     {
       "type": "actions",
+      "block_id": "times",
       "elements": [
         {
+          "action_id": "tp_begin",
           "type": "timepicker",
           "initial_time": "09:00",
           "placeholder": {
             "type": "plain_text",
             "text": "Select begin time",
             "emoji": true
-          },
-          "action_id": "tp_begin"
+          }
         },
         {
+          "action_id": "tp_end",
           "type": "timepicker",
           "initial_time": "17:00",
           "placeholder": {
             "type": "plain_text",
             "text": "Select end time",
             "emoji": true
-          },
-          "action_id": "tp_end"
+          }
         }
       ]
     }
