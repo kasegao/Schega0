@@ -50,10 +50,10 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
       throw new Error('Invalid callback_id')
     }
     // insert new sheet
-    const sheet_ret = main.newSheet()
+    const sheet_name = 'dummy'
     const cache = main.makeCache()
     const payload = FormPayloadProxy.Create(json)
-    const cache_data = main.createCacheData(sheet_ret.sheet_name, payload)
+    const cache_data = main.createCacheData(sheet_name, payload)
 
     // hook in 60 seconds
     const date = new Date()
@@ -68,7 +68,9 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     cache.put(cache_key, cache_data, 600)
 
     // response
-    const view = message_reply(sheet_ret.sheet_url)
+    const view = message_reply(
+      'シートの作成中です。しばらくお待ちください。\n※最大で3分程度かかります',
+    )
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
       method: 'post',
       contentType: 'application/json',
@@ -80,10 +82,24 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
 }
 
 function sheetTrigger(e: GoogleAppsScript.Events.TimeDriven) {
+  // load cache
   const cache = main.makeCache()
   const cache_key = e.triggerUid
   const cache_data = cache.get(cache_key)
+
+  // new sheet
+  const sheet_ret = main.newSheet()
+  cache_data.sheet_name = sheet_ret.sheet_name
   main.buildSheet(cache_data)
+
+  // notify
+  const view = message_reply(`日程調整をお願いします\n${sheet_ret.sheet_url}`)
+  const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify(view),
+  }
+  UrlFetchApp.fetch(config.webhook_url(), options)
 }
 
 /* view data */
@@ -404,14 +420,14 @@ const modal_setting = (initial_date: string) => {
   }
 }
 
-const message_reply = (sheet_url: string) => {
+const message_reply = (msg: string) => {
   return {
     blocks: [
       {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `日程調整をお願いします（シートの作成に1分程度かかります）\n<${sheet_url}|${sheet_url}>`,
+          text: msg,
         },
       },
     ],
