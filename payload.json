@@ -20,7 +20,7 @@
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "日程調整の参加者"
+        "text": "参加者"
       },
       "accessory": {
         "type": "multi_conversations_select",
@@ -34,6 +34,14 @@
           "exclude_bot_users": true
         },
         "action_id": "users"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "plain_text",
+        "text": "日時設定",
+        "emoji": true
       }
     },
     {
