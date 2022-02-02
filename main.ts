@@ -1,5 +1,5 @@
 import { CacheData, CacheDataProxy, FormPayload } from './cache'
-import { BOT_TOKEN, SS_KEY } from './env'
+import { Config } from './env'
 
 const TOP_CONTENTS = [
   ['予定が埋まっているセルを塗りつぶしてください（セルの左端が開始時刻）'],
@@ -26,10 +26,11 @@ const CELL_FRM_ORIGIN: Cell = {
   col: 1,
 }
 const TRANSPOSE = (a: string[][]) => a[0].map((_, c) => a.map((r) => r[c]))
+const CONFIG = new Config()
 
 // insert new sheet
 export function newSheet(sheet_name?: string) {
-  const spreadsheet = SpreadsheetApp.openById(SS_KEY)
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.ss_key())
   const sheet_nm = sheet_name ?? genRandomStr(12)
   const sheet = spreadsheet.insertSheet(sheet_nm)
   const msgRange = sheet.getRange(1, 1)
@@ -59,7 +60,7 @@ export function buildSheet(load_data: LoadData) {
   const result = load_data.result
 
   // get sheet
-  const spreadsheet = SpreadsheetApp.openById(SS_KEY)
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.ss_key())
   const sheet = spreadsheet.getSheetByName(load_data.sheet_name)
   if (sheet == null) return
 
@@ -158,7 +159,7 @@ function getUserName(user_id: string) {
       method: 'get',
       contentType: 'application/x-www-form-urlencoded',
       payload: {
-        token: BOT_TOKEN,
+        token: CONFIG.bot_token(),
         user: user_id,
       },
     }
