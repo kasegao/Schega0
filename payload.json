@@ -1,5 +1,4 @@
 {
-  "type": "modal",
   "title": {
     "type": "plain_text",
     "text": "日程調整",
@@ -10,6 +9,7 @@
     "text": "Submit",
     "emoji": true
   },
+  "type": "modal",
   "close": {
     "type": "plain_text",
     "text": "Cancel",
@@ -24,7 +24,7 @@
         "text": "参加者"
       },
       "accessory": {
-        "action_id": "users",
+        "action_id": "participants",
         "type": "multi_conversations_select",
         "placeholder": {
           "type": "plain_text",
@@ -64,7 +64,7 @@
           "initial_option": {
             "text": {
               "type": "plain_text",
-              "text": "5",
+              "text": " 5 d",
               "emoji": true
             },
             "value": "5"
@@ -78,7 +78,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "1",
+                "text": " 1 d",
                 "emoji": true
               },
               "value": "1"
@@ -86,7 +86,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "2",
+                "text": " 2 d",
                 "emoji": true
               },
               "value": "2"
@@ -94,7 +94,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "3",
+                "text": " 3 d",
                 "emoji": true
               },
               "value": "3"
@@ -102,7 +102,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "4",
+                "text": " 4 d",
                 "emoji": true
               },
               "value": "4"
@@ -110,7 +110,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "5",
+                "text": " 5 d",
                 "emoji": true
               },
               "value": "5"
@@ -118,7 +118,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "6",
+                "text": " 6 d",
                 "emoji": true
               },
               "value": "6"
@@ -126,7 +126,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "7",
+                "text": " 7 d",
                 "emoji": true
               },
               "value": "7"
@@ -134,7 +134,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "8",
+                "text": " 8 d",
                 "emoji": true
               },
               "value": "8"
@@ -142,7 +142,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "9",
+                "text": " 9 d",
                 "emoji": true
               },
               "value": "9"
@@ -150,7 +150,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "10",
+                "text": "10 d",
                 "emoji": true
               },
               "value": "10"
@@ -158,7 +158,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "11",
+                "text": "11 d",
                 "emoji": true
               },
               "value": "11"
@@ -166,7 +166,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "12",
+                "text": "12 d",
                 "emoji": true
               },
               "value": "12"
@@ -174,7 +174,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "13",
+                "text": "13 d",
                 "emoji": true
               },
               "value": "13"
@@ -182,7 +182,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "14",
+                "text": "14 d",
                 "emoji": true
               },
               "value": "14"
@@ -190,7 +190,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "15",
+                "text": "15 d",
                 "emoji": true
               },
               "value": "15"
@@ -198,7 +198,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "16",
+                "text": "16 d",
                 "emoji": true
               },
               "value": "16"
@@ -206,7 +206,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "17",
+                "text": "17 d",
                 "emoji": true
               },
               "value": "17"
@@ -214,7 +214,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "18",
+                "text": "18 d",
                 "emoji": true
               },
               "value": "18"
@@ -222,7 +222,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "19",
+                "text": "19 d",
                 "emoji": true
               },
               "value": "19"
@@ -230,7 +230,7 @@
             {
               "text": {
                 "type": "plain_text",
-                "text": "20",
+                "text": "20 d",
                 "emoji": true
               },
               "value": "20"
@@ -262,6 +262,49 @@
             "text": "Select end time",
             "emoji": true
           }
+        },
+        {
+          "action_id": "sp_intervals",
+          "type": "static_select",
+          "initial_option": {
+            "text": {
+              "type": "plain_text",
+              "text": "30 m",
+              "emoji": true
+            },
+            "value": "30"
+          },
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Select a number of days",
+            "emoji": true
+          },
+          "options": [
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "15 m",
+                "emoji": true
+              },
+              "value": "15"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "30 m",
+                "emoji": true
+              },
+              "value": "30"
+            },
+            {
+              "text": {
+                "type": "plain_text",
+                "text": "60 m",
+                "emoji": true
+              },
+              "value": "60"
+            }
+          ]
         }
       ]
     }
