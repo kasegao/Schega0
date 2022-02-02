@@ -3,5 +3,6 @@
     "lib": ["esnext"],
     "experimentalDecorators": true,
     "strict": true
-  }
+  },
+  "allowSyntheticDefaultImports": true
 }
