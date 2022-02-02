@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "emeraldwalk.runonsave",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+    ]
+}

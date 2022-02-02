@@ -6,4 +6,4 @@ appsscript.json
 .clasp.json
 
 # env
-env.js
+env.ts
