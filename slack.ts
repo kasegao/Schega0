@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Main } from './main'
 import { Config } from './env'
 import { FormPayloadProxy } from './cache'
 
 const config = new Config()
 const main = new Main()
+
+const cid_modal_setting = `${config.callback_id}_modal_setting`
 
 function doPost(e: GoogleAppsScript.Events.DoPost) {
   const json = JSON.parse(decodeURIComponent(e.parameter.payload))
@@ -13,12 +16,11 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     throw new Error('Invalid token')
   }
 
-  // check callback_id
-  if (json.callback_id != config.callback_id()) {
-    throw new Error('Invalid callback_id')
-  }
-
   if (['shortcut', 'message_action'].includes(json.type)) {
+    // check callback_id
+    if (json.callback_id != config.callback_id()) {
+      throw new Error('Invalid callback_id')
+    }
     // return modal
     const url = 'https://slack.com/api/views.open'
     const viewData = {
@@ -43,6 +45,10 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
   } else if (json.type === 'block_actions') {
     return ContentService.createTextOutput()
   } else if (json.type === 'view_submission') {
+    // check callback_id
+    if (json.view.callback_id != cid_modal_setting) {
+      throw new Error('Invalid callback_id')
+    }
     // insert new sheet
     const sheet_ret = main.newSheet()
     const cache = main.makeCache()
@@ -52,7 +58,7 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     // hook in 90 seconds
     const date = new Date()
     date.setTime(date.getTime() + 1000 * 90)
-    const trigger = ScriptApp.newTrigger('buildSheet')
+    const trigger = ScriptApp.newTrigger('sheetTrigger')
       .timeBased()
       .at(date)
       .create()
@@ -68,16 +74,22 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
       contentType: 'application/json',
       payload: view,
     }
-    const response = UrlFetchApp.fetch(config.webhook_url(), options)
-    return ContentService.createTextOutput(
-      JSON.stringify(response),
-    ).setMimeType(ContentService.MimeType.JSON)
+    UrlFetchApp.fetch(config.webhook_url(), options)
+    return ContentService.createTextOutput()
   }
+}
+
+function sheetTrigger(e: GoogleAppsScript.Events.TimeDriven) {
+  const cache = main.makeCache()
+  const cache_key = e.triggerUid
+  const cache_data = cache.get(cache_key)
+  main.buildSheet(cache_data)
 }
 
 /* view data */
 const modal_setting = (initial_date: string) => {
   return {
+    callback_id: cid_modal_setting,
     title: {
       type: 'plain_text',
       text: '日程調整',
