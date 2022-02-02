@@ -1,4 +1,4 @@
-import { CacheData, CacheDataProxy, FormPayload } from './cache'
+import { FormPayload } from './cache'
 import { Config } from './env'
 
 const TOP_CONTENTS = [
@@ -26,13 +26,18 @@ const CELL_FRM_ORIGIN: Cell = {
   col: 1,
 }
 const TRANSPOSE = (a: string[][]) => a[0].map((_, c) => a.map((r) => r[c]))
-const CONFIG = new Config()
+const config = new Config()
 
 // insert new sheet
-export function newSheet(sheet_name?: string) {
-  const spreadsheet = SpreadsheetApp.openById(CONFIG.ss_key())
-  const sheet_nm = sheet_name ?? genRandomStr(12)
-  const sheet = spreadsheet.insertSheet(sheet_nm)
+type NewSheetReturn = {
+  sheet_name: string
+  sheet_url: string
+}
+
+export function newSheet() {
+  const spreadsheet = SpreadsheetApp.openById(config.ss_key())
+  const sheet_name = genRandomStr(12)
+  const sheet = spreadsheet.insertSheet(sheet_name)
   const msgRange = sheet.getRange(1, 1)
   msgRange.setValue('現在シート作成中です。最大で3分程度かかります。')
   msgRange.setFontSize(24)
@@ -40,9 +45,13 @@ export function newSheet(sheet_name?: string) {
 
   const ss_url = spreadsheet.getUrl()
   const sheet_id = sheet.getSheetId()
-  const sheet_url = Utilities.formatString('%s#gid=%s', ss_url, sheet_id)
+  const sheet_url = `${ss_url}#gid=${sheet_id}`
 
-  return sheet_url
+  const ret: NewSheetReturn = {
+    sheet_name: sheet_name,
+    sheet_url: sheet_url,
+  }
+  return ret
 }
 
 function genRandomStr(length: number) {
@@ -55,13 +64,13 @@ function genRandomStr(length: number) {
 }
 
 // create sheet contents
-export function buildSheet(load_data: LoadData) {
+export function buildSheet(cache_data: CacheData) {
   // get input data
-  const result = load_data.result
+  const result = cache_data.result
 
   // get sheet
-  const spreadsheet = SpreadsheetApp.openById(CONFIG.ss_key())
-  const sheet = spreadsheet.getSheetByName(load_data.sheet_name)
+  const spreadsheet = SpreadsheetApp.openById(config.ss_key())
+  const sheet = spreadsheet.getSheetByName(cache_data.sheet_name)
   if (sheet == null) return
 
   // rename sheet
@@ -86,15 +95,15 @@ export function buildSheet(load_data: LoadData) {
   generateFrames(sheet, members, times, result.len_days)
 }
 
-type LoadData = {
+type CacheData = {
   sheet_name: string
   result: ModalResult
 }
 
-export function intoLoadData(cache: CacheData) {
-  const data: LoadData = {
-    sheet_name: cache.sheet_name,
-    result: intoModalResult(cache.result),
+export function createCacheData(sheet_name: string, payload: FormPayload) {
+  const data: CacheData = {
+    sheet_name: sheet_name,
+    result: fromPayload(payload),
   }
   return data
 }
@@ -109,7 +118,7 @@ type ModalResult = {
   interval: number // minute
 }
 
-function intoModalResult(payload: FormPayload) {
+function fromPayload(payload: FormPayload) {
   const user_id = payload.user.id
   const values = payload.view.state.values
   const conversations = values.users.participants.selected_conversations
@@ -159,7 +168,7 @@ function getUserName(user_id: string) {
       method: 'get',
       contentType: 'application/x-www-form-urlencoded',
       payload: {
-        token: CONFIG.bot_token(),
+        token: config.bot_token(),
         user: user_id,
       },
     }
@@ -347,7 +356,8 @@ export function makeCache() {
   return {
     get: function (key: string) {
       const str_json = cache.get(key) ?? '{}'
-      return CacheDataProxy.Parse(str_json)
+      const cache_data: CacheData = JSON.parse(str_json)
+      return cache_data
     },
     put: function (key: string, value: CacheData, sec: number) {
       cache.put(key, JSON.stringify(value), sec == null ? 600 : sec)
@@ -358,8 +368,10 @@ export function makeCache() {
 
 // import/export not working on gas
 export class Main {
-  public newSheet = (sheet_name?: string) => newSheet(sheet_name)
-  public intoLoadData = (cache_data: CacheData) => intoLoadData(cache_data)
-  public buildSheet = (load_data: LoadData) => buildSheet(load_data)
+  public newSheet = () => newSheet()
+  public createCacheData = (sheet_name: string, payload: FormPayload) =>
+    createCacheData(sheet_name, payload)
+  public fromPayload = (payload: FormPayload) => fromPayload(payload)
+  public buildSheet = (cache_data: CacheData) => buildSheet(cache_data)
   public makeCache = () => makeCache()
 }
